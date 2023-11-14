@@ -1,0 +1,18 @@
+version: '3.8'
+services:
+  front:
+    build:
+      context: ./
+      target: runner
+    volumes:
+      - .:/src
+    command: npm start
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+    networks:
+      - app-network
+networks:
+  app-network:
+    driver: bridge
