@@ -1,0 +1,292 @@
+{
+  "75bpm": {
+    "bmin": {
+      "instruments": [
+        {
+          "type": "guitar",
+          "name": "Guitar.wav"
+        },
+        {
+          "type": "drum",
+          "name": "Percussion.wav"
+        },
+        {
+          "type": "vocals",
+          "name": "Vocals.wav"
+        }
+      ]
+    }
+  },
+  "78bpm": {
+    "dmaj": {
+      "instruments": [
+        {
+          "type": "textures",
+          "name": "Harmonics.wav"
+        },
+        {
+          "type": "bass",
+          "name": "Bass.wav"
+        },
+        {
+          "type": "guitar",
+          "name": "GuitarBacking.wav"
+        },
+        {
+          "type": "guitar",
+          "name": "GuitarMain.wav"
+        },
+        {
+          "type": "guitar",
+          "name": "GuitarMuted.wav"
+        },
+        {
+          "type": "vocals",
+          "name": "Vocals.wav"
+        }
+      ]
+    }
+  },
+  "80bpm": {
+    "f#min": {
+      "instruments": [
+        {
+          "type": "textures",
+          "name": "Atmos.wav"
+        },
+        {
+          "type": "bass",
+          "name": "Bass.wav"
+        },
+        {
+          "type": "bass",
+          "name": "BassSynth.wav"
+        },
+        {
+          "type": "guitar",
+          "name": "GuitarLead.wav"
+        },
+        {
+          "type": "guitar",
+          "name": "GuitarMain.wav"
+        },
+        {
+          "type": "drum",
+          "name": "Percussion.wav"
+        },
+        {
+          "type": "vocals",
+          "name": "Vocals.wav"
+        }
+      ]
+    }
+  },
+  "90bpm": {
+    "fmin": {
+      "instruments": [
+          {
+            "type": "guitar",
+            "name": "Guitar.wav"
+          },
+          {
+            "type": "pad",
+            "name": "Pad.wav"
+          },
+          {
+            "type": "drum",
+            "name": "Percussion.wav"
+          },
+          {
+            "type": "textures",
+            "name": "Textures.wav"
+          },
+          {
+            "type": "vocals",
+            "name": "Vocals.wav"
+          }
+      ]
+    },
+    "bmin": {
+      "instruments": [
+          {
+            "type": "bass",
+            "name": "Bass.wav"
+          },
+          {
+            "type": "guitar",
+            "name": "GuitarLead.wav"
+          },
+          {
+            "type": "guitar",
+            "name": "GuitarMain.wav"
+          },
+          {
+            "type": "pad",
+            "name": "Pad.wav"
+          },
+          {
+            "type": "piano",
+            "name": "Piano.wav"
+          },
+          {
+            "type": "vocals",
+            "name": "Vocals.wav"
+          }
+      ]
+    },
+    "cmaj": {
+      "instruments": [
+        {
+          "type": "drum",
+          "name": "Hihats.wav"
+        },
+        {
+          "type": "drum",
+          "name": "Kick.wav"
+        },
+        {
+          "type": "drum",
+          "name": "Percussion.wav"
+        },
+        {
+          "type": "drum",
+          "name": "Snare.wav"
+        }
+      ]
+    }
+  },
+  "120bpm": {
+    "cmaj": {
+      "instruments": [
+        {
+          "type": "drum",
+          "name": "Clap.wav"
+        },
+        {
+          "type": "drum",
+          "name": "Hats.wav"
+        },
+        {
+          "type": "drum",
+          "name": "Kick.wav"
+        },
+        {
+          "type": "textures",
+          "name": "Noise.wav"
+        },
+        {
+          "type": "drum",
+          "name": "Percussion.wav"
+        },
+        {
+          "type": "drum",
+          "name": "Roll.wav"
+        }
+      ]
+    }
+  },
+  "130bpm": {
+    "bmin": {
+      "instruments": [
+        {
+          "type": "bass",
+          "name": "Bass.wav"
+        },
+        {
+          "type": "guitar",
+          "name": "GuitarHi.wav"
+        },
+        {
+          "type": "guitar",
+          "name": "GuitarLead.wav"
+        },
+        {
+          "type": "guitar",
+          "name": "GuitarMain.wav"
+        },
+        {
+          "type": "pad",
+          "name": "Pad.wav"
+        },
+        {
+          "type": "vocals",
+          "name": "Vocals.wav"
+        }
+      ]
+    }
+  },
+  "140bpm": {
+    "cmaj": {
+      "instruments": [
+        {
+          "type": "drum",
+          "name": "Clap.wav"
+        },
+        {
+          "type": "drum",
+          "name": "Hihats.wav"
+        },
+        {
+          "type": "drum",
+          "name": "Hihats2.wav"
+        },
+        {
+          "type": "drum",
+          "name": "Kick.wav"
+        },
+        {
+          "type": "drum",
+          "name": "Percussion.wav"
+        },
+        {
+          "type": "drum",
+          "name": "Snare.wav"
+        }
+      ]
+    }
+  },
+  "152bpm": {
+    "cmaj": {
+      "instruments": [
+        {
+          "type": "drum",
+          "name": "ClapReverb.wav"
+        },
+        {
+          "type": "drum",
+          "name": "Hats1.wav"
+        },
+        {
+          "type": "drum",
+          "name": "Hats2.wav"
+        },
+        {
+          "type": "drum",
+          "name": "Kick.wav"
+        },
+        {
+          "type": "drum",
+          "name": "Percussion.wav"
+        },
+        {
+          "type": "drum",
+          "name": "Snare.wav"
+        },
+        {
+          "type": "drum",
+          "name": "Top.wav"
+        }
+      ]
+    }
+  },
+  "0bpm": {
+    "cmaj": {
+      "instruments": [
+        {
+          "type": "drum",
+          "name": ""
+        }
+      ]
+    }
+  }
+}

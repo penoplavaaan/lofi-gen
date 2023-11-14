@@ -1,0 +1,10 @@
+{
+  "75bpm": ["bmin"],
+  "78bpm": ["dmaj"],
+  "80bpm": ["f#min"],
+  "90bpm": ["fmin","bmin","cmaj"],
+  "120bpm": ["cmaj"],
+  "130bpm": ["bmin"],
+  "140bpm": ["cmaj"],
+  "152bpm": ["cmaj"]
+}
