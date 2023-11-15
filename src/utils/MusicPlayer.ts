@@ -1,78 +1,107 @@
 import * as Tone from "tone";
-import {Player, Players} from "tone";
-import {Instrument} from "../types/instrument";
+import {Loop, Player} from "tone";
+import {Chords, Durations} from "../types/instrument";
 
 let vinylNoiseUrl: any
 let config: any
 let configAnnotation: any
 
 vinylNoiseUrl = require(`../resources/other/vinyl_noise.mp3`)
-config = require("../configs/loops.json");
-configAnnotation = require("../configs/loops.annotation.json");
+
+const Cmaj7 = Chords.Cmaj7
+const Fmaj7: Array<string> = Chords.Fmaj7
 
 export class MusicPlayer
 {
     private readonly vinylNoise: Player
     private readonly vinylNoiseDuration = 3;
-    private players: Players = new Players()
-    private instruments: Array<Player> = []
-    private  config: Array<Instrument>
-    private bpm: string
-    private key: string
+    private bpm: number
+    // private key: string
     private duration: number
-    private playing  = false
+    private timeSignature: number
+    private loops: Array<Loop> = []
 
     constructor() {
-        let randomInitials =  this.pickRandomBpmKey(configAnnotation)
-        this.bpm = randomInitials.bpm
-        this.key = randomInitials.key
-        this.duration = this.generateDuration()
-
-        this.config = config[this.bpm][this.key].instruments;
-
-        for (const i in this.config) {
-            const url = this.buildUrl(this.config[i].name)
-
-            this.instruments.push(
-                new Tone.Player(url).toDestination()
-            )
-        }
+        this.bpm = 60
+        // this.key = randomInitials.key
+        this.duration = this.generateTrackDuration()
+        this.timeSignature = 4;
 
         this.vinylNoise = new Tone.Player(vinylNoiseUrl).toDestination()
     }
 
-    async play() {
-        this.playing = true
+    play() {
+        this.generateLoops()
+        this.playGeneratedLoops()
+    }
+
+    generateLoops()
+    {
+        let keys = require('../resources/one_shot/Keys.wav')
+        let cream = require('../resources/one_shot/Cream.wav')
+        let tight = require('../resources/one_shot/Tight.wav')
+        let clap = require('../resources/one_shot/Clap.wav')
+
+        const samplerKeys = this.createSampler(keys)
+        const samplerCream =  this.createSampler(cream)
+        const samplerTight =  this.createSampler(tight)
+        const samplerClap =  this.createSampler(clap)
+
+        const loopKeys = this.createLoop(
+            samplerKeys,
+            Cmaj7,
+            Durations.hole,
+            Durations.zero
+        )
+
+        const loopKeysB = this.createLoop(
+            samplerKeys,
+            Fmaj7,
+            Durations.hole,
+            Durations.half
+        )
+
+        const loopCream = this.createLoop(
+            samplerCream,
+            "C4",
+            Durations.eight,
+            Durations.zero
+        )
+
+        const loopTight = this.createLoop(
+            samplerTight,
+            "C4",
+            Durations.half,
+            Durations.half
+        )
+
+        const loopClap = this.createLoop(
+            samplerClap,
+            "C4",
+            Durations.thirtyseconds,
+            Durations.hole
+        )
+    }
+
+    playGeneratedLoops(){
         Tone.loaded().then(() => {
-            for (const i in this.instruments) {
-                let instrument = this.instruments[i];
-                instrument.fadeOut = 4;
-                instrument.fadeIn = 2;
-                instrument.loop = true;
-                instrument.autostart = true;
-                instrument.start(0, 0, this.duration)
-            }
+            Tone.Transport.start();
         })
-
-        let prevDuration = this.duration
-        setTimeout(() => {
-            if (this.playing) {
-                this.playVinylNoise()
-                setTimeout(() => {
-                    this.reInitialize()
-                    this.play()
-
-                }, this.vinylNoiseDuration * 1000)
-            }
-        }, prevDuration*1000)
     }
 
     stop() {
-        this.playing = false;
+        this.playVinylNoise()
+        Tone.Transport.stop();
+        this.stopLoops();
+    }
 
-        for (const i in this.instruments) {
-            this.instruments[i].stop();
+    stopLoops()
+    {
+        for (const loopsKey in this.loops) {
+            this.loops[loopsKey].stop()
         }
+
+        this.loops = [];
     }
 
     playVinylNoise(): void {
@@ -87,53 +116,64 @@ export class MusicPlayer
         this.vinylNoise.stop();
     }
 
-    buildUrl(name: string) {
-        return require(`../resources/loops/${this.bpm}/${this.key}/${name}`)
-    }
+    // pickRandomBpmKey(data: any): any{
+    //     const BPMs = Object.keys(data);
+    //     const randomBPM = BPMs[Math.floor(Math.random() * BPMs.length)];
+    //     const keysArray = data[randomBPM];
+    //     const randomKey = keysArray[Math.floor(Math.random() * keysArray.length)];
+    //
+    //     if (randomBPM === this.bpm && this.key === this.key) {
+    //         return this.pickRandomBpmKey(data)
+    //     }
+    //
+    //     return {
+    //         "bpm": randomBPM,
+    //         "key": randomKey
+    //     }
+    // }
 
-    pickRandomBpmKey(data: any): any{
-        const BPMs = Object.keys(data);
-        const randomBPM = BPMs[Math.floor(Math.random() * BPMs.length)];
-        const keysArray = data[randomBPM];
-        const randomKey = keysArray[Math.floor(Math.random() * keysArray.length)];
-
-        if (randomBPM === this.bpm && this.key === this.key){
-            return this.pickRandomBpmKey(data)
-        }
-
-        return {
-            "bpm": randomBPM,
-            "key": randomKey
-        }
-    }
-
-    generateDuration(): number
+    generateTrackDuration(): number
     {
-        const min = 100;
-        const max = 300;
-        const duration = Math.floor(Math.random() * (max - min + 1)) + min;
-        console.log('duration is: '+duration)
-        return duration
+        const min = Number(process.env.REACT_APP_MIN_DURATION ?? 10);
+        const max = Number(process.env.REACT_APP_MAX_DURATION ?? 20);
+        return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
-    public reInitialize()
+    getDuration(
+        duration: Durations
+    )
     {
-        this.instruments = [];
-        let randomInitials =  this.pickRandomBpmKey(configAnnotation)
-        this.bpm = randomInitials.bpm
-        this.key = randomInitials.key
-        this.duration = this.generateDuration()
-
-        this.config = config[this.bpm][this.key].instruments;
-
-        for (const i in this.config) {
-            const url = this.buildUrl(this.config[i].name)
-
-            this.instruments.push(
-                new Tone.Player(url).toDestination()
-            )
+        if (duration === Durations.zero){
+            return Durations.zero
         }
+
+        let barSeconds = (60/this.bpm) * this.timeSignature;
+        return barSeconds/duration
     }
 
+    createLoop (
+        sampler: Tone.Sampler,
+        notes: Tone.Unit.Frequency | Tone.Unit.Frequency[],
+        loopInterval: Durations,
+        offset: Durations,
+        duration: Durations = Durations.quarter
+    ): Tone.Loop<Tone.LoopOptions>{
+        let loop = new Tone.Loop(time => {
+                sampler.triggerAttackRelease(notes, this.getDuration(duration), time);
+            },
+            this.getDuration(loopInterval)).start(this.getDuration(offset)
+        );
+        this.loops.push(loop)
+        return loop;
+    }
 
+    createSampler(asset: any)
+    {
+        return new Tone.Sampler({
+            urls: {
+                "C4": asset
+            },
+            release: 1,
+        }).toDestination();
+    }
 }

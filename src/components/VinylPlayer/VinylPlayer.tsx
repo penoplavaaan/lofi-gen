@@ -3,7 +3,7 @@ import './player.css';
 import {MusicPlayer} from "../../utils/MusicPlayer";
 import * as Tone from "tone";
 
-let musicPlayer = new MusicPlayer()
+let musicPlayer : MusicPlayer
 
 const VinylPlayer = () => {
     const [isLabelRunning, setIsLabelRunning] = useState(false);
@@ -14,10 +14,9 @@ const VinylPlayer = () => {
 
     useEffect(() => {
         const buttonClickHandler = async () => {
-            if (isLabelRunning) {
+            if (isLabelRunning && musicPlayer) {
                 Tone.start().then(() => {
                     musicPlayer.stop()
-                    musicPlayer.playVinylNoise()
                 })
 
                 setIsLabelRunning(false);
@@ -27,7 +26,7 @@ const VinylPlayer = () => {
                     boxShadow: '2px 2px 0px #1a1a1a'
                 });
             } else {
-                musicPlayer.reInitialize();
+                musicPlayer = new MusicPlayer()
 
                 setButtonStyles({
                     top: '157px',
