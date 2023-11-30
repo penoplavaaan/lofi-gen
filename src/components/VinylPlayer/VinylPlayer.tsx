@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import './player.css';
 import {MusicPlayer} from "../../utils/MusicPlayer";
 import * as Tone from "tone";
+import Countdown from 'react-countdown';
 
 let musicPlayer = new MusicPlayer()
 
@@ -96,7 +97,7 @@ const VinylPlayer = () => {
             buttonElement?.removeEventListener('click', buttonClickHandler);
             nextButton?.removeEventListener('click', nextClickHandler);
         };
-    }, [isLabelRunning, chords]);
+    }, [isLabelRunning, chords, duration, BPM]);
 
     return (
         <div>
@@ -148,6 +149,9 @@ const VinylPlayer = () => {
             </center>
             <center>
                 {duration ? `${duration}s`:''}
+            </center>
+            <center>
+                {duration ? <Countdown date={Date.now() + Number(duration)*1000} />:''}
             </center>
         </div>
     );

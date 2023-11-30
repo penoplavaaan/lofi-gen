@@ -169,14 +169,16 @@ export class LoopGenerator
 
    generateRandomPattern(maxBeatsCount: number = 15): number[] {
         const pattern: number[] = [];
+        let beatsCount = 0;
+
         for (let i = 0; i < 16; i++) {
+            beatsCount += 1;
             pattern.push(Math.round(Math.random()));
+            if (beatsCount >= maxBeatsCount ){
+                break;
+            }
         }
 
-        let beatsCount = pattern.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-
-        return beatsCount >= maxBeatsCount
-            ? this.generateRandomPattern(maxBeatsCount)
-            :pattern;
+        return pattern;
     }
 }
