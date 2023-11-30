@@ -1,95 +1,101 @@
 import * as Tone from "tone";
 import {Loop, Player} from "tone";
-import {Chords, Durations} from "../types/instrument";
+import {Track} from "./Track";
+import {Instruments, InstrumentType} from "../types/instrument";
+import {Chord} from "tonal";
 
-let vinylNoiseUrl: any
-let config: any
-let configAnnotation: any
+let vinylNoiseUrl = require(`../resources/other/vinyl_noise.mp3`)
+let piano = [
+    require('../resources/one_shot/piano/piano1.mp3'),
+    require('../resources/one_shot/piano/piano2.mp3'),
+    require('../resources/one_shot/piano/piano3.wav'),
+]
+let hats = [
+    require('../resources/one_shot/drums/hihat/hihat1.wav'),
+    require('../resources/one_shot/drums/hihat/hihat2.wav'),
+    require('../resources/one_shot/drums/percussion/percussion1.wav'),
+    require('../resources/one_shot/drums/percussion/percussion2.wav'),
+    require('../resources/one_shot/drums/percussion/percussion3.wav'),
+    require('../resources/one_shot/drums/percussion/percussion5.wav'),
+    require('../resources/one_shot/drums/percussion/percussion6.wav'),
+    require('../resources/one_shot/drums/percussion/percussion7.wav'),
+    require('../resources/one_shot/drums/percussion/percussion8.wav'),
+]
+let shakers = [
+    require('../resources/one_shot/drums/shaker/shaker1.wav')
+]
+let snaps = [
+    require('../resources/one_shot/drums/snap/snap1.wav')
+]
+let textures = [
+    require('../resources/one_shot/textures/texture1.wav'),
+    require('../resources/one_shot/textures/texture2.wav'),
+    require('../resources/one_shot/textures/texture3.wav')
+]
 
-vinylNoiseUrl = require(`../resources/other/vinyl_noise.mp3`)
-
-const Cmaj7 = Chords.Cmaj7
-const Fmaj7: Array<string> = Chords.Fmaj7
+const DEFAULT_BPM = 60;
+const DEFAULT_DURATION_S = 60;
 
 export class MusicPlayer
 {
     private readonly vinylNoise: Player
     private readonly vinylNoiseDuration = 3;
-    private bpm: number
-    // private key: string
-    private duration: number
-    private timeSignature: number
-    private loops: Array<Loop> = []
+    public track: Track | undefined;
+    private playing: boolean = false
+    public instruments: Instruments
 
     constructor() {
-        this.bpm = 60
-        // this.key = randomInitials.key
-        this.duration = this.generateTrackDuration()
-        this.timeSignature = 4;
-
         this.vinylNoise = new Tone.Player(vinylNoiseUrl).toDestination()
+
+        this.instruments = {
+            piano: {
+                urls: piano,
+            },
+            hats: {
+                urls: hats,
+            },
+            shaker: {
+                urls: shakers,
+            },
+            textures: {
+                urls: textures
+            },
+            snaps: {
+                urls: snaps
+            }
+        }
+    }
+
+    next()
+    {
+        this.stop();
+        this.play();
     }
 
     play() {
-        this.generateLoops()
+        this.playing = true;
+
+        this.muteVinylNoise()
+        this.track = new Track(this.instruments)
+
+        // console.log('Duration is: '+ this.track.duration)
         this.playGeneratedLoops()
-    }
-
-    generateLoops()
-    {
-        let keys = require('../resources/one_shot/Keys.wav')
-        let cream = require('../resources/one_shot/Cream.wav')
-        let tight = require('../resources/one_shot/Tight.wav')
-        let clap = require('../resources/one_shot/Clap.wav')
-
-        const samplerKeys = this.createSampler(keys)
-        const samplerCream =  this.createSampler(cream)
-        const samplerTight =  this.createSampler(tight)
-        const samplerClap =  this.createSampler(clap)
-
-        const loopKeys = this.createLoop(
-            samplerKeys,
-            Cmaj7,
-            Durations.hole,
-            Durations.zero
-        )
-
-        const loopKeysB = this.createLoop(
-            samplerKeys,
-            Fmaj7,
-            Durations.hole,
-            Durations.half
-        )
-
-        const loopCream = this.createLoop(
-            samplerCream,
-            "C4",
-            Durations.eight,
-            Durations.zero
-        )
-
-        const loopTight = this.createLoop(
-            samplerTight,
-            "C4",
-            Durations.half,
-            Durations.half
-        )
-
-        const loopClap = this.createLoop(
-            samplerClap,
-            "C4",
-            Durations.thirtyseconds,
-            Durations.hole
-        )
     }
 
     playGeneratedLoops(){
         Tone.loaded().then(() => {
+            Tone.Transport.bpm.value = this.track?.bpm ?? DEFAULT_BPM;
             Tone.Transport.start();
+            setTimeout(() => {
+                if (this.playing){
+                    this.next()
+                }
+            }, (this.track?.duration ?? DEFAULT_DURATION_S) * 1000)
         })
     }
 
     stop() {
+        this.playing = false;
         this.playVinylNoise()
         Tone.Transport.stop();
         this.stopLoops();
@@ -97,11 +103,13 @@ export class MusicPlayer
 
     stopLoops()
     {
-        for (const loopsKey in this.loops) {
-            this.loops[loopsKey].stop()
-        }
+        if (this.track){
+            for (const loopsKey in this.track?.loops ?? []) {
+                this.track.loops[loopsKey].stop()
+            }
 
-        this.loops = [];
+            this.track.loops = [];
+        }
     }
 
     playVinylNoise(): void {
@@ -112,68 +120,6 @@ export class MusicPlayer
     }
 
     muteVinylNoise(): void {
-        this.vinylNoise.fadeOut = 0
         this.vinylNoise.stop();
-    }
-
-    // pickRandomBpmKey(data: any): any{
-    //     const BPMs = Object.keys(data);
-    //     const randomBPM = BPMs[Math.floor(Math.random() * BPMs.length)];
-    //     const keysArray = data[randomBPM];
-    //     const randomKey = keysArray[Math.floor(Math.random() * keysArray.length)];
-    //
-    //     if (randomBPM === this.bpm && this.key === this.key) {
-    //         return this.pickRandomBpmKey(data)
-    //     }
-    //
-    //     return {
-    //         "bpm": randomBPM,
-    //         "key": randomKey
-    //     }
-    // }
-
-    generateTrackDuration(): number
-    {
-        const min = Number(process.env.REACT_APP_MIN_DURATION ?? 10);
-        const max = Number(process.env.REACT_APP_MAX_DURATION ?? 20);
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
-
-    getDuration(
-        duration: Durations
-    )
-    {
-        if (duration === Durations.zero){
-            return Durations.zero
-        }
-
-        let barSeconds = (60/this.bpm) * this.timeSignature;
-        return barSeconds/duration
-    }
-
-    createLoop (
-        sampler: Tone.Sampler,
-        notes: Tone.Unit.Frequency | Tone.Unit.Frequency[],
-        loopInterval: Durations,
-        offset: Durations,
-        duration: Durations = Durations.quarter
-    ): Tone.Loop<Tone.LoopOptions>{
-        let loop = new Tone.Loop(time => {
-                sampler.triggerAttackRelease(notes, this.getDuration(duration), time);
-            },
-            this.getDuration(loopInterval)).start(this.getDuration(offset)
-        );
-        this.loops.push(loop)
-        return loop;
-    }
-
-    createSampler(asset: any)
-    {
-        return new Tone.Sampler({
-            urls: {
-                "C4": asset
-            },
-            release: 1,
-        }).toDestination();
     }
 }

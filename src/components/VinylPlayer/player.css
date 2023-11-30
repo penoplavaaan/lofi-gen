@@ -6,7 +6,7 @@ body{
     position:relative;
     width:660px;
     height:400px;
-    margin-top:600px;
+    margin-top:400px;
     background:#9dbc96;
 }
 
@@ -237,6 +237,26 @@ body{
 }
 
 #button:hover{
+    cursor:pointer;
+}
+
+#button1{
+    position:absolute;
+    top: 160px;
+    left: 101px;
+    width: 10px;
+    height: 10px;
+    background:#464646;
+    border-radius: 10px;
+    transform: rotateZ(30deg) skewX(-25deg);
+    -ms-transform: rotateZ(30deg) skewX(-25deg);
+    -moz-transform: rotateZ(30deg) skewX(-25deg);
+    -webkit-transform: rotateZ(30deg) skewX(-25deg);
+    box-shadow:2px 2px #1a1a1a;
+    z-index:10;
+}
+
+#button1:hover{
     cursor:pointer;
 }
 

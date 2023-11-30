@@ -3,50 +3,100 @@ import './player.css';
 import {MusicPlayer} from "../../utils/MusicPlayer";
 import * as Tone from "tone";
 
-let musicPlayer : MusicPlayer
+let musicPlayer = new MusicPlayer()
 
 const VinylPlayer = () => {
-    const [isLabelRunning, setIsLabelRunning] = useState(false);
+    const [
+        isLabelRunning,
+        setIsLabelRunning,
+    ] = useState(false);
+
+    let [
+        chords ,
+        setChords
+    ] = useState('');
+
+    let [
+        BPM ,
+        setBPM
+    ] = useState('');
+
+    let [
+        duration ,
+        setDuration
+    ] = useState('');
+
     const [buttonStyles, setButtonStyles] = useState({
         top: '155px',
-        boxShadow: '2px 2px 0px #1a1a1a'
-    });
+        boxShadow: '2px 2px 0px #1a1a1a',
+        background:'#ac5151'
+});
 
     useEffect(() => {
-        const buttonClickHandler = async () => {
-            if (isLabelRunning && musicPlayer) {
-                Tone.start().then(() => {
-                    musicPlayer.stop()
-                })
+
+        const buttonClickHandler = () => {
+            playPause()
+        };
+
+        const nextClickHandler = () => {
+            if (isLabelRunning) {
+                musicPlayer.next()
+
+                if(musicPlayer.track){
+                    setChords(JSON.stringify(musicPlayer.track.chordNames));
+                    setBPM(String(musicPlayer.track.bpm));
+                }
+            }
+        }
+
+        const playPause = () => {
+            if (isLabelRunning) {
+                musicPlayer.stop()
+                setChords('');
+                setBPM('');
+                setDuration('');
+
 
                 setIsLabelRunning(false);
 
                 setButtonStyles({
                     top: '155px',
-                    boxShadow: '2px 2px 0px #1a1a1a'
-                });
+                    boxShadow: '2px 2px 0px #1a1a1a',
+                    background:'#ac5151'
+            });
             } else {
-                musicPlayer = new MusicPlayer()
-
                 setButtonStyles({
                     top: '157px',
-                    boxShadow: '0px 0px 0px #1a1a1a'
-                });
+                    boxShadow: '1px 1px 1px #1a1a1a',
+                    background:'#9dbc96'
+            });
 
                 setIsLabelRunning(true);
-                musicPlayer.muteVinylNoise();
 
-                await Tone.start().then(() => musicPlayer.play())
+                Tone.start().then(() => {
+                    musicPlayer.play()
+
+                    if(musicPlayer.track){
+                        setChords(JSON.stringify(musicPlayer.track.chordNames));
+                        setBPM(String(musicPlayer.track.bpm));
+                        setDuration(String(musicPlayer.track.duration));
+                    }
+                })
             }
-        };
+        }
 
         const buttonElement = document.getElementById('button');
         buttonElement?.addEventListener('click', buttonClickHandler);
 
+        const nextButton = document.getElementById('button1');
+        nextButton?.addEventListener('click', nextClickHandler);
+
+
         return () => {
             buttonElement?.removeEventListener('click', buttonClickHandler);
+            nextButton?.removeEventListener('click', nextClickHandler);
         };
-    }, [isLabelRunning]);
+    }, [isLabelRunning, chords]);
 
     return (
         <div>
@@ -72,6 +122,7 @@ const VinylPlayer = () => {
                     </div>
                     <div id="table"></div>
                     <div id="button" style={buttonStyles}></div>
+                    <div id="button1"></div>
                     <div id="disk">
                         <div id="label" className={isLabelRunning ? 'running' : 'paused'}></div>
                     </div>
@@ -88,6 +139,15 @@ const VinylPlayer = () => {
                     <div id="arm"></div>
                     <div id="head"></div>
                 </div>
+            </center>
+            <center>
+                {chords}
+            </center>
+            <center>
+                {BPM ? `${BPM} bpm`:''}
+            </center>
+            <center>
+                {duration ? `${duration}s`:''}
             </center>
         </div>
     );
